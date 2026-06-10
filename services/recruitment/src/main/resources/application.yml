@@ -1,0 +1,34 @@
+server:
+  port: 6604
+spring:
+  application:
+    name: recruitment
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        namespace: ${spring.profiles.active}
+        import-check:
+          enabled: false
+    sentinel:
+      transport:
+        dashboard: ${data.sentinel.dashboard.url}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - optional:nacos:recruitment.yml
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: product
+    import:
+      optional:nacos:recruitment.yml

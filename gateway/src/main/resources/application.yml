@@ -1,0 +1,114 @@
+# 端口号
+server:
+  port: 6601
+
+--- #################### 网关配置 ####################
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+    gateway:
+      globalcors:
+        cors-configurations:
+          # 允许所有请求跨域
+          '[/**]':
+            # 允许所有源
+            allowed-origin-patterns: '*'
+            # 允许所有方法
+            allowed-methods: '*'
+            # 允许所有请求头
+            allowed-headers: '*'
+      routes:
+        - id: permission
+          uri: lb://permission
+          predicates:
+            - Path=/permission/**
+          filters:
+            - RewritePath=/permission/(?<segment>.*), /${segment}
+            - UserIDHeader=X-USER-ID, ID
+          order: 0
+        - id: recruitment
+          uri: lb://recruitment
+          predicates:
+            - Path=/recruitment/**
+          filters:
+            - RewritePath=/recruitment/(?<segment>.*), /${segment}
+            - UserIDHeader=X-USER-ID, ID
+          order: 1
+        - id: sign
+          uri: lb://sign
+          predicates:
+            - Path=/sign/**
+          filters:
+            - RewritePath=/sign/(?<segment>.*), /${segment}
+            - UserIDHeader=X-USER-ID, ID
+          order: 2
+        - id: check
+          uri: lb://check
+          predicates:
+          - Path=/check/**
+          filters:
+            - RewritePath=/sign/(?<segment>.*), /${segment}
+            - UserIDHeader=X-USER-ID, ID
+          order: 3
+
+
+--- #################### 数据库相关配置 ####################
+
+spring:
+  # 数据源配置项
+  datasource:
+    url: jdbc:mysql://117.72.16.195:3306/Permissions?useSSL=false&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true # MySQL Connector/J 8.X 连接的示例
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root # 数据库账号
+    password: yLy#Alxy # 数据库密码
+    # HikariCP 自定义配置，对应 HikariConfig 配置属性类
+    hikari:
+      # 设置连接的最大生命周期，建议小于MySQL的wait_timeout设置
+      max-lifetime: 1800000
+      # 连接超时时间
+      connection-timeout: 30000
+      # 连接验证查询
+      validation-timeout: 5000
+      # 空闲连接最小数量
+      minimum-idle: 5
+      # 最大连接数
+      maximum-pool-size: 20
+      # 连接测试查询
+      connection-test-query: SELECT 1
+  # redis配置
+  data:
+    redis:
+      database: 2
+      host: 117.72.16.195
+      port: 8000
+      password:
+      jedis:
+        pool:
+          max-active: 10
+          min Idle: 5
+          max Wait: -1
+  main:
+    allow-circular-references: true
+
+
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+jwt:
+  secret: gcuwxw-Integration
+  expirationTime: 604800
+  issuer: springboot3-security
+  header: Authorization
+  tokenHead: Bearer
+
+
+rsa:
+  privateKey: MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANn432XdfVrU2g5W86yii/UbQuQVVbAZ4ilTmVtmXlStGcGvNDbD6hu77rNu8eOaTL7NKxg6s+XyGNWVKbts/6WCFh/2ZRm5cYyjRQ0X4DqDtQVaiKNjzO+FSLjV/3KgibtKj7dPMzN5C9NDL2Bc18ueOFVU+TezG3bVghnHyXBfAgMBAAECgYAnt+fNQgzjjkGlt0ZzwLLMGQmZUiHpEu5ZJXieZQrvVxOIbYqQKCbyos4eOCsvlCBD7FLb+WZqkjDgSmvuUTBL/EglXl8+6DiUKEGoWoFX6Rue9WtSVKUsb4WS/SSPw7K5DZPMzuuYBWwIZ57iuPY53fHqQAspW7qxRrEyLW0lwQJBAOYsZIystVa8xyLx0+eCV8T+rDW2uFb9X5xPQjENTlbN3t81F5TJK74kYIuEetK3jvuFxob5Kmid3Wh+pZ4kSA8CQQDybgFqOLqoxem2OLbZS96piupg1mHlrXRIzCKCqAlFm4SbcLIbCxZUDGi8Ojd5jmetYLUXiqIWT9/LilD+JIKxAkEA2FbVUxtpfdMFYKTnROvPzwqHlhzdenW/jc05K52UCiaJ2kWumlvSz26lh7zHLJL2wxXjmS1MXPQ0DGktBUyYpQJBAN/qYzwtMZr5UiiQsbJ6tSp7uIfA+6McVq92fNmZQxcb0ZuQt7DqyLDQ1VwlmV+Y/IHTNPCNh7B8DgT9uFlEd8ECQQDZ87ccTkqR6Kk+No39akWb5XRFrgFeb0brUbAPE4mWkDOoLM2RaAQeeEiQgZy/zYruqocLTYlGiJa2L2NV/w92
+  publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZ+N9l3X1a1NoOVvOsoov1G0LkFVWwGeIpU5lbZl5UrRnBrzQ2w+obu+6zbvHjmky+zSsYOrPl8hjVlSm7bP+lghYf9mUZuXGMo0UNF+A6g7UFWoijY8zvhUi41f9yoIm7So+3TzMzeQvTQy9gXNfLnjhVVPk3sxt21YIZx8lwXwIDAQAB

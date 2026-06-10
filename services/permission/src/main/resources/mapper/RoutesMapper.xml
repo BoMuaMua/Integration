@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.permission.mapper.RoutesMapper">
+
+
+    <select id="selectUserRoutes" resultType="com.example.permission.entity.Routes">
+        select *
+        from Routes
+                 left join Permissions on Routes.perm=Permissions.id
+                 left join Groups_Permissions on Permissions.id=Groups_Permissions.permission_id
+                 left join PermissionGroups on PermissionGroups.id=Groups_Permissions.group_id
+                 left join Roles_Groups on Roles_Groups.group_id=PermissionGroups.id
+                 left join Roles on Roles.id=Roles_Groups.role_id
+                 left join User on User.role_id=Roles.id
+        where Routes.`status`=1 and User.id = #{id} and Routes.client_id = #{clientId};
+    </select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.check.service.AdministratorService">
+    <select id="allMainTask" resultType="com.example.check.entity.pojo.MainShowInfo">
+        SELECT * FROM main_task LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <update id="modifyMainTaskStatus">
+        UPDATE main_task SET status = #{status} WHERE id = #{id}
+    </update>
+
+
+    <insert id="postSonTask">
+        INSERT INTO administrator
+        (requirementID, mainTaskID, requirementName, requirementDetail, createTime, tag, otherInfo)
+        VALUES
+            (#{requirementID}, #{mainTaskID}, #{requirementName}, #{requirementDetail}, #{creatTime}, #{tag}, #{otherInfo})
+    </insert>
+
+    <update id="modifySonTaskStatus">
+        UPDATE requirement_form SET status = #{status} WHERE id = #{id}
+    </update>
+</mapper>

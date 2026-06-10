@@ -1,0 +1,41 @@
+## （生产端）
+#spring:
+#  datasource:
+#    url: jdbc:mysql://10.1.8.212:3306/SignIn
+#    username: root
+#    password: WZywb^sql57
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      connection-test-query: SELECT 1 FROM DUAL
+#      minimum-idle: 10
+#      maximum-pool-size: 100
+#      connection-init-sql: set names utf8mb4
+#      connection-timeout: 7200
+#  data:
+#    redis:
+#      host: 10.1.8.212
+#      password: WZywb^reDis
+#      database: 1
+#      port: 6379
+#
+#logging:
+#  level:
+#    com.example.order.feign: debug
+#
+#feign:
+#  sentinel:
+#    enabled: true
+#
+#jwt:
+#  secret: oauth2_test
+#  expirationTime: 604800
+#  issuer: springboot3-security
+#  header: Authorization
+#  tokenHead: Bearer
+#
+#rsa:
+#  privateKey: MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANn432XdfVrU2g5W86yii/UbQuQVVbAZ4ilTmVtmXlStGcGvNDbD6hu77rNu8eOaTL7NKxg6s+XyGNWVKbts/6WCFh/2ZRm5cYyjRQ0X4DqDtQVaiKNjzO+FSLjV/3KgibtKj7dPMzN5C9NDL2Bc18ueOFVU+TezG3bVghnHyXBfAgMBAAECgYAnt+fNQgzjjkGlt0ZzwLLMGQmZUiHpEu5ZJXieZQrvVxOIbYqQKCbyos4eOCsvlCBD7FLb+WZqkjDgSmvuUTBL/EglXl8+6DiUKEGoWoFX6Rue9WtSVKUsb4WS/SSPw7K5DZPMzuuYBWwIZ57iuPY53fHqQAspW7qxRrEyLW0lwQJBAOYsZIystVa8xyLx0+eCV8T+rDW2uFb9X5xPQjENTlbN3t81F5TJK74kYIuEetK3jvuFxob5Kmid3Wh+pZ4kSA8CQQDybgFqOLqoxem2OLbZS96piupg1mHlrXRIzCKCqAlFm4SbcLIbCxZUDGi8Ojd5jmetYLUXiqIWT9/LilD+JIKxAkEA2FbVUxtpfdMFYKTnROvPzwqHlhzdenW/jc05K52UCiaJ2kWumlvSz26lh7zHLJL2wxXjmS1MXPQ0DGktBUyYpQJBAN/qYzwtMZr5UiiQsbJ6tSp7uIfA+6McVq92fNmZQxcb0ZuQt7DqyLDQ1VwlmV+Y/IHTNPCNh7B8DgT9uFlEd8ECQQDZ87ccTkqR6Kk+No39akWb5XRFrgFeb0brUbAPE4mWkDOoLM2RaAQeeEiQgZy/zYruqocLTYlGiJa2L2NV/w92
+#  publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZ+N9l3X1a1NoOVvOsoov1G0LkFVWwGeIpU5lbZl5UrRnBrzQ2w+obu+6zbvHjmky+zSsYOrPl8hjVlSm7bP+lghYf9mUZuXGMo0UNF+A6g7UFWoijY8zvhUi41f9yoIm7So+3TzMzeQvTQy9gXNfLnjhVVPk3sxt21YIZx8lwXwIDAQAB
+#
+#mybatis:
+#  mapper-locations: classpath*:main/resources/mapper/*.xml

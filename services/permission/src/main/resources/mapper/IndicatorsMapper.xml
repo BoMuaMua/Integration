@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.permission.mapper.IndicatorsMapper">
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+
+    <select id="getIndicatorsByActivityId" parameterType="java.lang.Integer"
+            resultType="com.example.permission.entity.Indicators">
+        SELECT * FROM Indicators as I
+        left join Indicators_Activity as IA on I.indicators_id = IA.indicators_id
+        where IA.activity_id = #{activityId}
+    </select>
+
+
+    <resultMap id="ElementsResultMap" type="com.example.permission.entity.Elements">
+        <id column="element_id" property="elementsId" />
+        <result column="element_name" property="elementsName" />
+        <result column="content" property="content" />
+        <result column="standard_score" property="standardScore" />
+    </resultMap>
+
+    <resultMap id="IndicatorsResultMap" type="com.example.permission.entity.IndicatorsMessage">
+        <id column="indicators_id" property="indicatorsId" />
+        <result column="indicators_name" property="indicatorsName" />
+        <collection column="elements" property="elements" ofType="com.example.permission.entity.Elements"
+                    resultMap="ElementsResultMap" />
+    </resultMap>
+
+
+    <select id="selectAll" resultMap="IndicatorsResultMap">
+        SELECT * FROM Indicators as I
+        LEFT JOIN Elements as E on I.indicators_id = E.indicators_id
+    </select>
+    <select id="selectById" resultMap="IndicatorsResultMap">
+        SELECT * FROM Indicators_Activity as IA
+                          LEFT JOIN Indicators as I on IA.indicators_id = I.indicators_id
+                          LEFT JOIN Elements as E on I.indicators_id = E.indicators_id
+        WHERE IA.activity_id = #{activityId}
+    </select>
+    <select id="getUserScores" resultType="com.example.permission.entity.UserScore">
+        SELECT
+            U.id as userId,
+            username,
+            year,
+            sum(totalScore) as totalScore
+        FROM
+            User_Fraction as UF
+            LEFT JOIN Activity as A ON UF.activity_id = A.activity_id
+            LEFT JOIN User as U ON UF.user_id = U.id
+        WHERE
+            #{year} IS NULL OR A.year = #{year}
+        GROUP BY
+            U.id, year,  username
+    </select>
+    <select id="getUserScoresByActivityId" resultType="com.example.permission.entity.UserScore"
+            parameterType="java.lang.Integer">
+        SELECT
+            U.id as userId,
+            username,
+            year,
+            sum(totalScore) as totalScore
+        FROM
+            User_Fraction as UF
+            LEFT JOIN Activity as A ON UF.activity_id = A.activity_id
+            LEFT JOIN User as U ON UF.user_id = U.id
+        WHERE
+            A.activity_id = #{activityId}
+        GROUP BY
+            U.id,  username
+    </select>
+</mapper>

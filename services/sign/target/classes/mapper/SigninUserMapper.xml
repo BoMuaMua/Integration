@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.signin.mapper.SigninUserMapper">
+    <insert id="insert" parameterType="com.example.signin.entity.SigninUser">
+        INSERT INTO SigninUser (id, user_name, department_id,role_id, activity_name,status)
+        VALUES (#{user.id},#{user.username},#{user.departmentId},#{user.roleId},#{activityName},0)
+    </insert>
+    <update id="updateByIdAndActivityName">
+        UPDATE SigninUser
+        SET status = 1, signin_time = #{signinTime}
+        WHERE id = #{id} AND activity_name = #{activityName}
+    </update>
+    <select id="selectCount" resultType="java.lang.Integer">
+       SELECT COUNT(*) FROM SigninUser WHERE activity_name = #{activityName}
+    </select>
+    <select id="selectList" resultType="com.example.signin.entity.SigninUser">
+        SELECT * FROM SigninUser WHERE activity_name = #{activityName}
+    </select>
+    <update id="updateById">
+        UPDATE SigninUser
+        SET status = 1, signin_time = #{signinTime}
+        WHERE id = #{id} AND activity_name = #{activityName}
+    </update>
+    <select id="selectStatusByIdAndActivityName" resultType="java.lang.Integer">
+        select status from SigninUser where id = #{id} AND activity_name = #{activityName}
+    </select>
+    <delete id="delateActivity" parameterType="com.example.signin.entity.Activity">
+        DELETE from SigninUser  WHERE activity_name = #{activityName}
+    </delete>
+    <select id="selectSignUserByActivityName" resultType="com.example.signin.entity.SigninUser">
+        select * from SigninUser where activity_name = #{activityName}
+    </select>
+    <update id="updateSigninUserActivityName">
+        UPDATE SigninUser
+        SET activity_name = #{newActivityName}
+        WHERE activity_name = #{oldActivityName}
+    </update>
+    <select id="selectAll" resultType="com.example.signin.entity.SigninUser">
+        select * from SigninUser
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.permission.mapper.ElementsMapper">
+
+    <insert id="insert">
+        INSERT INTO Elements(indicators_id, element_name, content, standard_score)
+        VALUES
+        <foreach collection="elements" item="item" separator=",">
+            (#{item.indicatorsId}, #{item.elementsName}, #{item.content}, #{item.standardScore})
+        </foreach>
+    </insert>
+    <insert id="updateAndInsert" parameterType="java.util.List">
+        INSERT INTO Elements (element_id, indicators_id, element_name, standard_score, content)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.elementsId}, #{item.indicatorsId}, #{item.elementsName}, #{item.standardScore}, #{item.content})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+                             element_name = VALUES(element_name),
+                             content = VALUES(content),
+                             standard_score = VALUES(standard_score),
+                             indicators_id = VALUES(indicators_id)
+    </insert>
+    <delete id="deleteByIndicatorsId" parameterType="java.lang.Integer">
+        DELETE FROM Elements WHERE indicators_id = #{indicatorsId}
+    </delete>
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM Elements WHERE element_id = #{elementId}
+    </delete>
+
+</mapper>

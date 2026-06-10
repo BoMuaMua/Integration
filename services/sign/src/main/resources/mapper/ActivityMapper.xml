@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.signin.mapper.ActivityMapper">
+    <resultMap id="activityList" type="com.example.signin.entity.ActivityList">
+        <id column="activity_id" property="activityId"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="type_id" property="typeName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+    </resultMap>
+
+    <resultMap id="activityDetail" type="com.example.signin.entity.SignDetail">
+        <result column="create_time" property="time"/>
+        <result column="end_time" property="endTime"/>
+        <result column="type_name" property="typeName"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="description" property="description"/>
+        <collection property="signData" ofType="com.example.signin.entity.SignUserDetail">
+            <id column="id" property="id"/>
+            <result column="user_name" property="userName"/>
+            <result column="name" property="departmentName"/>
+            <result column="signin_time" property="signinTime"/>
+            <result column="status" property="status"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insertActivity">
+        INSERT INTO Activity (type_id, start_time, end_time, user_id, department_id, description, activity_name,
+                              create_time)
+        SELECT at.type_id,
+               #{activity.startTime},
+               #{activity.endTime},
+               #{userIdString},
+               #{departmentIdString},
+               #{activity.description},
+               #{activity.activityName},
+               #{now}
+        FROM activityType at
+        WHERE at.type_name = #{activity.typeName};
+
+    </insert>
+    <select id="selectByActivityName" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*)
+        from Activity
+        where activity_name = #{activityName}
+    </select>
+    <select id="selectTypeByActivityName" resultType="java.lang.Integer"
+            parameterType="java.lang.String">
+        select type_id
+        from Activity
+        where activity_name = #{activityName}
+    </select>
+    <select id="getCreateTime" resultType="java.time.LocalDateTime">
+        select create_time
+        from Activity
+        where activity_name = #{activityName}
+          and activity_id = #{activityId}
+    </select>
+    <select id="selectDepts" resultType="java.lang.String">
+        select department_id
+        from Activity
+        where activity_name = #{activityName}
+          and activity_id = #{activityId}
+    </select>
+    <select id="selectDeptNameById" resultType="java.lang.String">
+        select name
+        from Departments
+        where id = #{id}
+    </select>
+    <select id="getDeptNameByDeptId" resultType="java.lang.String">
+        select name
+        from Departments
+        where id = #{deptId}
+    </select>
+
+
+    <select id="selectAllActivity" resultType="com.example.signin.entity.ActivityList">
+        select *
+        from Activity
+        order by create_time desc
+    </select>
+
+    <delete id="delateActivity1" parameterType="com.example.signin.entity.Activity">
+        DELETE from Activity  WHERE activity_name = #{activityName}
+    </delete>
+
+    <update id="updateActivity">
+        UPDATE Activity AS A
+        JOIN SigninUser AS SU ON A.activity_name = SU.activity_name
+        SET
+        A.type_id = #{typeName},
+        A.activity_name = #{activityName},
+        A.user_id =
+        <foreach collection="userId" index="index" item="userIdItem" separator=",">
+            #{userIdItem}
+        </foreach>,
+        A.department_id =
+        <foreach collection="departmentId" index="index" item="departmentIdItem" separator=",">
+            #{departmentIdItem}
+        </foreach>,
+        A.description = #{description},
+        A.end_time = #{endTime}
+        WHERE A.activity_id = #{activityId}
+    </update>
+
+    <select id="getActivityNameByActivityId" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT activity_name
+        FROM Activity
+        WHERE activity_id = #{activityId}
+    </select>
+
+    <select id="getActivityData" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT type_name
+        FROM activityType
+        WHERE type_id = (
+            SELECT type_id
+            FROM Activity
+            WHERE activity_name = #{activityName}
+        );
+    </select>
+
+    <select id="selectByActivityName1" parameterType="java.lang.String" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM SigninUser
+        WHERE activity_name = #{activityName}
+    </select>
+    <select id="getDescription" resultType="java.lang.String">
+        select description
+        from Activity
+        where activity_name = #{activityName}
+          and activity_id = #{activityId}
+    </select>
+    <select id="selectCreateTime" resultType="java.time.LocalDateTime">
+        select create_time
+        from Activity
+        where activity_name = #{activityName}
+          and activity_id = #{activityId}
+    </select>
+    <select id="selectActivityByName" resultType="com.example.signin.entity.Activity">
+        select *
+        from Activity
+        where activity_name = #{activityName}
+    </select>
+    <select id="selectActivityByUserId" resultType="com.example.signin.entity.ActivityList">
+        select a.*, at.type_name as typeName
+        from Activity a,
+             activityType at
+        where a.activity_name in (select activity_name from SigninUser where id = #{id})
+          and a.type_id = at.type_id
+        order by a.create_time desc
+    </select>
+    <select id="selectAllActivities" resultType="com.example.signin.entity.ActivityList">
+        select a.*,
+               at.type_name
+        from Activity a,
+             activityType at
+        where a.type_id = at.type_id
+        order by a.create_time desc;
+    </select>
+    <select id="selectActivityDetailByName" resultMap="activityDetail">
+        select a.create_time,
+               a.end_time,
+               at.type_name,
+               a.activity_name,
+               a.description,
+               s.id,
+               s.user_name,
+               d.name,
+               s.signin_time,
+               s.status
+        from Activity a,
+             activityType at,
+             SigninUser s,
+             Departments d
+        where a.activity_name = #{activityName}
+          and s.activity_name = #{activityName}
+          and a.type_id = at.type_id
+          and s.department_id = d.id;
+    </select>
+    <select id="selectActivitiesByName" resultType="com.example.signin.entity.SignDetail">
+        select create_time as time,end_time,activity_name,description from Activity  where activity_name = #{activityName}
+    </select>
+
+</mapper>
