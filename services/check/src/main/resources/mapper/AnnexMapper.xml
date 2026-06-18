@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.check.mapper.AnnexMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.check.entity.Annex">
+            <id property="annexId" column="annex_id" />
+            <result property="breakdownId" column="breakdown_id" />
+            <result property="annexName" column="annex_name" />
+            <result property="annexType" column="annex_type" />
+            <result property="annexData" column="annex_data" />
+            <result property="annexSize" column="annex_size" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        annex_id,breakdown_id,annex_name,annex_type,annex_data,annex_size,
+        create_time
+    </sql>
+    <select id="getAnnexList" resultType="com.example.check.entity.pojo.AnnexList">
+        SELECT annex_name AS object, annex_size AS size, annex_type AS type, create_time AS createTime FROM annex WHERE breakdown_id = #{requirementId} AND type = #{type}
+    </select>
+    <select id="getData" resultType="com.example.check.entity.pojo.AnnexDownloadNewDO">
+        SELECT annex_name,annex_type,mime_type,annex_data FROM annex WHERE annex_name = #{objectName}
+    </select>
+</mapper>

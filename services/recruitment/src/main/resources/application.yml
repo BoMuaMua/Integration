@@ -1,5 +1,6 @@
 server:
   port: 6604
+
 spring:
   application:
     name: recruitment
@@ -7,9 +8,16 @@ spring:
     active: dev
   cloud:
     nacos:
-      server-addr: 127.0.0.1:8848
-      config:
+      # --- 核心修复：增加服务注册发现配置 ---
+      discovery:
+        server-addr: 10.1.32.242:8848
         namespace: ${spring.profiles.active}
+        group: DEFAULT_GROUP
+      # --- 配置中心保持不变 ---
+      config:
+        server-addr: 10.1.32.242:8848
+        namespace: ${spring.profiles.active}
+        file-extension: yml
         import-check:
           enabled: false
     sentinel:
@@ -17,18 +25,19 @@ spring:
         dashboard: ${data.sentinel.dashboard.url}
 
 ---
+# 开发环境配置
 spring:
   config:
     activate:
       on-profile: dev
     import:
-      - optional:nacos:recruitment.yml
-
+      - nacos:recruitment.yml?group=DEFAULT_GROUP&refresh=true
 
 ---
+# 生产环境配置
 spring:
   config:
     activate:
       on-profile: product
     import:
-      optional:nacos:recruitment.yml
+      - nacos:recruitment.yml?group=DEFAULT_GROUP&refresh=true

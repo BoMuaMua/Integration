@@ -1,7 +1,8 @@
 package com.example.RecruitNewPeople.utils;
 
-import common.InfoUser;
+
 import com.example.RecruitNewPeople.entity.ResponseResult;
+import com.example.RecruitNewPeople.entity.pojo.InfoUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;

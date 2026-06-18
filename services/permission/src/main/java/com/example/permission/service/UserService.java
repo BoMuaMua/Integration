@@ -8,4 +8,6 @@ public interface UserService {
     ResponseResult information(HttpServletRequest request);
 
     ResponseResult update(HttpServletRequest request,PersonUpdateUserDTO user);
+
+    ResponseResult allInformation(Integer departmentId);
 }

@@ -74,6 +74,15 @@ public class PermissionsServiceImpl implements PermissionsService {
         return new ResponseResult(200, "查询成功", permissions);
     }
 
+    @Override
+    public List<String> getPermissionsByUserId(Long userId) {
+        if (userId == null) {
+            return List.of();
+        }
+        List<String> perms = permissionsMapper.selectPermsByUserId(userId);
+        return perms != null ? perms : List.of();
+    }
+
     @Resource
     private UserMapper userMapper;
 

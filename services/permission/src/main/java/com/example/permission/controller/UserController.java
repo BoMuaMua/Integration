@@ -29,4 +29,11 @@ public class UserController {
     public ResponseResult update(HttpServletRequest request, @RequestBody PersonUpdateUserDTO user) {
         return userService.update(request,user);
     }
+
+    @Operation(summary = "获取所有个人信息")
+    @GetMapping("/allInformation")
+    public ResponseResult allInformation(@RequestParam Integer departmentId) {
+        System.out.println(departmentId);
+        return userService.allInformation(departmentId);
+    }
 }

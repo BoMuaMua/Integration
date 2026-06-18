@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -120,4 +121,59 @@ public class UserServiceImpl implements UserService {
         return new ResponseResult(401, "修改失败");
     }
 
+    @Override
+    public ResponseResult allInformation(Integer departmentId) {
+        List<User> users = userInfoUtil.selectByDepartmentId(departmentId);
+        List<InfoUserDTO> infoUserDTOList = new ArrayList<>();
+
+        RSA rsa = new RSA(privateKey, null);
+        List<Departments> departments = departmentService.getDepartmentsList();
+        List<Roles> roles = rolesService.getRolesList();
+
+        for (User user : users) {
+            InfoUserDTO infoUserDTO = new InfoUserDTO();
+            infoUserDTO.setId(user.getId());
+            infoUserDTO.setUsername(user.getUsername());
+            infoUserDTO.setGrade(user.getGrade());
+
+            if (user.getEmail() != null) {
+                infoUserDTO.setEmail(rsa.decryptStr(user.getEmail(), KeyType.PrivateKey));
+            }
+            if (user.getPhone() != null) {
+                infoUserDTO.setPhone(rsa.decryptStr(user.getPhone(), KeyType.PrivateKey));
+            }
+
+            infoUserDTO.setCreateTime(user.getCreateTime());
+            infoUserDTO.setAvatar(user.getAvatar());
+            infoUserDTO.setStatus(user.getStatus());
+
+            for (Departments department : departments) {
+                if (department.getId().equals(user.getDepartmentId())) {
+                    infoUserDTO.setDepartmentId(department.getId());
+                    infoUserDTO.setDepartment(department.getName());
+                    break;
+                }
+            }
+
+            for (Roles role : roles) {
+                if (role.getId().equals(user.getRoleId())) {
+                    infoUserDTO.setRoleId(role.getId());
+                    infoUserDTO.setRole(role.getName());
+                    break;
+                }
+            }
+
+            infoUserDTOList.add(infoUserDTO);
+        }
+
+        System.out.println(new ResponseResult(200, "获取成功", infoUserDTOList));
+        return new ResponseResult(200, "获取成功", infoUserDTOList);
+    }
+
 }
+
+
+
+
+
+

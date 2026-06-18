@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.check.service.TeacherService">
-
+<mapper namespace="com.example.check.mapper.TeacherMapper">
+    <insert id="postMainTask">
+        insert into main_task (task_name, datelimit, teacher, department, phone_number, office_address, tag, create_time)
+        VALUES (
+                   #{mainTask.taskName},
+                   #{mainTask.dateLimit},
+                   #{mainTask.teacher},
+                   #{mainTask.department},
+                   #{mainTask.phoneNumber},
+                   #{mainTask.officeAddress},
+                   #{mainTask.tag},
+                   #{createTime}
+               )
+    </insert>
+    <select id="showMainTask" resultType="com.example.check.entity.MainTask">
+        SELECT * FROM main_task WHERE teacher = #{teacherName} LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <delete id="deleteMainTask">
+        DELETE FROM main_task WHERE main_Task_ID = #{id}
+    </delete>
+    <delete id="deleteRequirementsRequirement" parameterType="int">
+        DELETE FROM requirement_form WHERE requirement_id = #{id};
+    </delete>
+    <delete id="deleteRequirementsAnnex" parameterType="int">
+        DELETE FROM annex WHERE breakdown_id = #{id}
+    </delete>
+    <update id="postFeedback">
+        UPDATE main_task SET satisfaction = #{score},tag = #{tag},feedback = #{context} WHERE main_task_id = #{id}
+    </update>
+    <insert id="addRequirements">
+        INSERT INTO requirement_form (main_task_id,requirement_detail,create_time,other_info,tag)
+        VALUES(#{mainTaskId},#{requirementDetail},#{createTime},#{otherInfo},#{tag})
+    </insert>
+    <insert id="addAnnex">
+        INSERT INTO annex (breakdown_id,annex_name,mime_type,annex_type,annex_data,annex_size,create_time)
+        VALUES(#{breakdownId},#{annexName},#{mimeType},#{annexType},#{annexData},#{annexSize},#{createTime})
+    </insert>
 </mapper>

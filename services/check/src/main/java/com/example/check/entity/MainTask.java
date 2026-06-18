@@ -6,6 +6,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.util.Date;
+
 //主任务表
 @Data
 @Entity
@@ -18,7 +20,7 @@ public class MainTask {
 
     //    任务状态
     @Column(name = "tag")
-    private char tag;
+    private int tag;
 
     //    任务名称
     @Column(name = "task_name")
@@ -26,7 +28,11 @@ public class MainTask {
 
     //    要求时间
     @Column(name = "datelimit")
-    private String dateLimit;
+    private Date dateLimit;
+
+    //    创建时间
+    @Column(name = "create_time")
+    private Date createTime;
 
     //    委托老师姓名
     @Column(name = "teacher")

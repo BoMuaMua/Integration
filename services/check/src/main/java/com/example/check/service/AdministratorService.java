@@ -3,18 +3,45 @@ package com.example.check.service;
 import com.example.check.common.Result;
 import com.example.check.entity.MainTask;
 import com.example.check.entity.RequirementForm;
+import com.example.check.entity.TaskBreakdown;
+import com.example.check.entity.pojo.AnnexList;
+import com.example.check.entity.pojo.MainShowDetail;
+import com.example.check.entity.pojo.MainShowInfo;
+import com.example.check.entity.pojo.InfoUser;
 
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 
 public interface AdministratorService {
-    Result allMainTask(Integer page, Integer pageSize);
+    List<MainShowInfo> allMainTask(Integer page, Integer pageSize);
 
-    Result getMainTaskDetail(Integer id);
+    List<InfoUser> getUsers(Integer DepartmentId);
 
-    Result postSon(RequirementForm requirementForm);
+    RequirementForm getMainTaskRequire(int mainTaskId);
 
-    Result updSonStatus(RequirementForm requirementForm);
+    List<MainTask> getMainTaskByName(String mainTaskName);
 
-    Result updMainStatus(MainTask mainTask);
+    List<MainTask> getMainTaskByOfficial (String official);
+
+    String updMainStatus(int status,Integer id);
+
+    Integer postSon(TaskBreakdown taskBreakdown);
+
+    List<TaskBreakdown> allSonTask(Integer MaintaskId);
+
+    TaskBreakdown getSonTaskDetail(Integer SonTaskId);
+
+    String updSonStatus(int status,Integer id);
+
+    String deleteSonTask(Integer SonTaskId);
+
+    String addAnnexs(MultipartFile[] files,Integer breakdownId);
+
+    List<AnnexList> getSonAnnexList(int requirementId);
+
+    List<AnnexList> getMainAnnexList(int requirementId);
+
+    List<AnnexList> getReplyAnnexList(int breakdownId);
 }

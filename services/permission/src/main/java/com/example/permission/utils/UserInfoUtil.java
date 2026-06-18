@@ -5,6 +5,8 @@ import com.example.permission.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class UserInfoUtil {
 
@@ -22,4 +24,15 @@ public class UserInfoUtil {
             return user;
         }
     }
+
+    public List<User> selectByDepartmentId(Integer departmentId){
+        if (redisUtil.get(departmentId.toString()) != null){
+            return (List<User>) redisUtil.get(departmentId.toString());
+        }else {
+            List<User> users = userMapper.selectByDepartmentId(departmentId);
+            redisUtil.set(departmentId.toString(),users);
+            return users;
+        }
+    }
 }
+

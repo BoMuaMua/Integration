@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.check.service.OfficerService">
-
+<mapper namespace="com.example.check.mapper.OfficerMapper">
+    <update id="updateSubTaskStatus">
+        UPDATE  task_breakdown SET tag = #{status} WHERE breakdown_id = #{breakdownId}
+    </update>
+    <select id="getMyAssignedTasks" resultType="com.example.check.entity.TaskBreakdown">
+        SELECT * FROM task_breakdown WHERE officer = #{officeAddress}
+    </select>
 </mapper>

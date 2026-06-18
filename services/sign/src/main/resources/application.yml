@@ -3,16 +3,11 @@ server:
 spring:
   application:
     name: sign
-  datasource:
-    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
   profiles:
-    active: dev
+    active: product
   cloud:
     nacos:
-      server-addr: 127.0.0.1:8848
+      server-addr: 10.1.32.242:8848
       config:
         namespace: ${spring.profiles.active}
         import-check:
@@ -27,7 +22,7 @@ spring:
     activate:
       on-profile: dev
     import:
-      - optional:nacos:sign.yml
+      - optional:nacos:check.yml
 
 
 ---
@@ -36,6 +31,4 @@ spring:
     activate:
       on-profile: product
     import:
-      optional:nacos:sign.yml
-
-
+      optional:nacos:check.yml

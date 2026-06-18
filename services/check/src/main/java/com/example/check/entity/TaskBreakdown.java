@@ -1,12 +1,15 @@
 package com.example.check.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 
 @Data
 @Entity
@@ -31,13 +34,14 @@ public class TaskBreakdown {
 
 //    任务详情
     @Column(name = "task_detail")
-    private String taskDetiail;
+    private String taskDetail;
 
 //    要求时间
     @Column(name = "deadline")
-    private Date deadline;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private OffsetDateTime deadline;
 
-    //    任务负责人
+    //    任务负责人‘
     @Column(name = "officer")
     private String officer;
 
@@ -46,5 +50,9 @@ public class TaskBreakdown {
     private String administrator;
 //    管理员联系方式
     @Column(name = "admin_phone")
-    private long adminPhone;
+    private String adminPhone;
+
+    @Column(name = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private OffsetDateTime createTime;
 }

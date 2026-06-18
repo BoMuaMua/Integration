@@ -117,11 +117,11 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
         <!--      lombok  -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>annotationProcessor</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.projectlombok</groupId>-->
+<!--            <artifactId>lombok</artifactId>-->
+<!--            <scope>annotationProcessor</scope>-->
+<!--        </dependency>-->
         <!--      公共实体类  -->
         <dependency>
             <groupId>org.example</groupId>

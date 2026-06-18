@@ -29,7 +29,7 @@ public class CustomOauth2AuthenticationFilter implements WebFilter {
     private final CustomAuthenticationSuccessHandler successHandler;
 
     // 白名单路径 - 明确指定只处理/login
-    private final Set<String> whiteList = Set.of("/error", "/actuator/health");
+    private final Set<String> whiteList = Set.of("/error", "/actuator/health","/check/api/teacher");
 
     public CustomOauth2AuthenticationFilter(WebClient.Builder webClientBuilder,
                                             CustomAuthenticationSuccessHandler successHandler) {
@@ -42,8 +42,13 @@ public class CustomOauth2AuthenticationFilter implements WebFilter {
         String path = exchange.getRequest().getURI().getPath();
         HttpMethod method = exchange.getRequest().getMethod();
 
-        // 跳过非POST的/login请求和其他白名单路径
-        if (!path.equals("/login") || whiteList.contains(path)) {
+        // 跳过非POST的/login请求和白名单路径（包括/check/api/teacher及其子路径）
+        if (!path.equals("/login")) {
+            // 检查是否在白名单中或匹配白名单路径模式
+            if (whiteList.contains(path) || 
+                whiteList.stream().anyMatch(whitePath -> path.startsWith(whitePath.replace("/**", "/")))) {
+                return chain.filter(exchange);
+            }
             return chain.filter(exchange);
         }
 

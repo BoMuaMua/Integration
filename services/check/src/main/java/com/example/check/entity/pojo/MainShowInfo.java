@@ -1,12 +1,14 @@
 package com.example.check.entity.pojo;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class MainShowInfo {
     private int mainTaskID;
-    private char tag;
+    private int tag;
     private String taskName;
-    private String dateLimit;
+    private Date dateLimit;
     private String teacher;
 
 }

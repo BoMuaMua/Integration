@@ -77,7 +77,19 @@ public class SecurityConfiguration {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable) // 确保禁用表单登录
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                .cors(ServerHttpSecurity.CorsSpec::disable)
+                 .cors(cors -> cors.configurationSource(request -> {
+                     org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+                     config.addAllowedOriginPattern("*");
+                     config.addAllowedMethod("GET");
+                     config.addAllowedMethod("POST");
+                     config.addAllowedMethod("PUT");
+                     config.addAllowedMethod("DELETE");
+                     config.addAllowedMethod("OPTIONS");
+                     config.addAllowedHeader("*");
+                     config.setAllowCredentials(true);
+                     config.setMaxAge(3600L);
+                     return config;
+                 }))
                 .authorizeExchange(exchanges -> {
                     exchanges.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     anonymousUrls.forEach(url -> exchanges.pathMatchers(url).permitAll());
@@ -87,8 +99,8 @@ public class SecurityConfiguration {
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
                 )
-                .addFilterBefore(customOauth2AuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-                .addFilterBefore(gatewayAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+//                .addFilterBefore(customOauth2AuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+//                .addFilterBefore(gatewayAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 
@@ -112,6 +124,8 @@ public class SecurityConfiguration {
         // 添加默认的匿名访问路径
         anonymousUrls.add("/error");
         anonymousUrls.add("/login");
+        anonymousUrls.add("/**");
+        anonymousUrls.add("/check/api/teacher/**"); // 支持 /check/api/teacher 及其所有子路径
 
         // 查找带有@AnonymousAccess注解的接口
         for (Map.Entry<RequestMappingInfo, HandlerMethod> infoEntry : handlerMethods.entrySet()) {

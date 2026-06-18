@@ -1,24 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.check.service.AdministratorService">
-    <select id="allMainTask" resultType="com.example.check.entity.pojo.MainShowInfo">
-        SELECT * FROM main_task LIMIT #{pageSize} OFFSET #{offset}
+<mapper namespace="com.example.check.mapper.AdministratorMapper">
+
+    <select id="allMainTask" resultType="com.example.check.entity.MainTask">
+        SELECT *
+        FROM main_task LIMIT #{pageSize}
+        OFFSET #{offset}
     </select>
 
-    <update id="modifyMainTaskStatus">
-        UPDATE main_task SET status = #{status} WHERE id = #{id}
+    <update id="updaMainStatus">
+        UPDATE main_task
+        SET tag = #{status}
+        WHERE main_task_id = #{mainTaskId}
     </update>
 
+    <select id="getMainTaskByName" resultType="com.example.check.entity.MainTask">
+        SELECT *
+        FROM main_task
+        WHERE task_name LIKE CONCAT('%', #{mainTaskName}, '%')
+    </select>
+
+    <select id="getMainTaskIdByOfficial" resultType="java.lang.Integer">
+        SELECT DISTINCT main_task_id
+        FROM task_breakdown
+        WHERE officer = #{Official}
+    </select>
+
+    <select id="getMainTaskByOfficial" resultType="com.example.check.entity.MainTask">
+        SELECT *
+        FROM main_task
+        WHERE main_task_id = #{mainTaskId}
+    </select>
 
     <insert id="postSonTask">
-        INSERT INTO administrator
-        (requirementID, mainTaskID, requirementName, requirementDetail, createTime, tag, otherInfo)
-        VALUES
-            (#{requirementID}, #{mainTaskID}, #{requirementName}, #{requirementDetail}, #{creatTime}, #{tag}, #{otherInfo})
+        INSERT INTO task_breakdown
+        (main_task_id, task_name, tag,  task_detail, deadline, officer, administrator, admin_phone, create_time)
+        VALUES (#{requirementForm.mainTaskId}, #{requirementForm.taskName},#{requirementForm.tag}, #{requirementForm.taskDetail},#{requirementForm.deadline} , #{requirementForm.officer},#{requirementForm.administrator}, #{requirementForm.adminPhone}, #{createTime})
     </insert>
 
-    <update id="modifySonTaskStatus">
-        UPDATE requirement_form SET status = #{status} WHERE id = #{id}
+    <select id="allSonTask" resultType="com.example.check.entity.TaskBreakdown">
+        SELECT *
+        FROM task_breakdown WHERE main_Task_ID = #{mainTaskId}
+    </select>
+
+    <select id="getSonTaskDetail" resultType="com.example.check.entity.TaskBreakdown">
+        SELECT *
+        FROM task_breakdown WHERE breakdown_ID = #{sonTaskId}
+    </select>
+
+    <delete id="deleteSonTask">
+        DELETE FROM task_breakdown
+        WHERE breakdown_id = #{sonTaskId}
+    </delete>
+
+
+    <update id="updaSonStatus">
+        UPDATE task_breakdown
+        SET tag = #{status}
+        WHERE breakdown_id = #{sonTaskId}
     </update>
+
+    <select id="getMainTaskRequest" resultType="com.example.check.entity.RequirementForm">
+        SELECT *
+        FROM requirement_form
+        WHERE main_task_id = #{mainTaskId}
+    </select>
+
+    <select id="getSonId" resultType="java.lang.Integer">
+        SELECT breakdown_id FROM task_breakdown WHERE main_task_id = #{mainTaskId} AND task_name = #{taskName} AND officer = #{officer} AND administrator = #{administrator} AND admin_phone = #{adminPhone} AND tag = #{tag} AND deadline = #{deadline} AND task_detail = #{taskDetail}
+    </select>
+
 </mapper>

@@ -3,6 +3,7 @@ package com.example.signin.utils;
 import com.example.signin.entity.ResponseResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import common.InfoUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;

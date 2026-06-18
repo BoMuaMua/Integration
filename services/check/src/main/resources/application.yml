@@ -1,13 +1,19 @@
 server:
-  port: 8080
+  port: 6605
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 spring:
   application:
     name: check
   profiles:
-    active: dev
+    active: product
   cloud:
     nacos:
-      server-addr: 127.0.0.1:8848
+#      server-addr: 114.132.92.175:8848
+      server-addr: 10.1.32.242:8848
       config:
         namespace: ${spring.profiles.active}
         import-check:
@@ -15,6 +21,8 @@ spring:
     sentinel:
       transport:
         dashboard: ${data.sentinel.dashboard.url}
+
+
 
 ---
 spring:

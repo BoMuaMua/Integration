@@ -6,7 +6,7 @@ import com.example.permission.entity.User;
 import com.example.permission.entity.dto.RoutesDTO;
 import com.example.permission.service.RoutesService;
 import com.example.permission.utils.UserInfoUtil;
-import common.InfoUser;
+//import common.InfoUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;

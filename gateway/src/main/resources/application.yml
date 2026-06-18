@@ -1,6 +1,6 @@
 # 端口号
 server:
-  port: 6601
+  port: 6600
 
 --- #################### 网关配置 ####################
 
@@ -9,18 +9,21 @@ spring:
     name: gateway
   cloud:
     nacos:
-      server-addr: 127.0.0.1:8848
+      server-addr: 10.1.32.242:8848
     gateway:
-      globalcors:
-        cors-configurations:
-          # 允许所有请求跨域
-          '[/**]':
-            # 允许所有源
-            allowed-origin-patterns: '*'
-            # 允许所有方法
-            allowed-methods: '*'
-            # 允许所有请求头
-            allowed-headers: '*'
+#      globalcors:
+#        add-to-simple-url-handler-mapping: true
+#        cors-configurations:
+#          # 允许所有请求跨域
+#          '[/**]':
+#            # 允许所有源
+#            allowed-origin-patterns: ''
+#            # 允许所有方法
+#            allowed-methods: '*'
+#            # 允许所有请求头
+#            allowed-headers: '*'
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       routes:
         - id: permission
           uri: lb://permission
@@ -49,9 +52,9 @@ spring:
         - id: check
           uri: lb://check
           predicates:
-          - Path=/check/**
+            - Path=/check/**
           filters:
-            - RewritePath=/sign/(?<segment>.*), /${segment}
+            - RewritePath=/check/(?<segment>.*), /${segment}
             - UserIDHeader=X-USER-ID, ID
           order: 3
 
@@ -61,10 +64,10 @@ spring:
 spring:
   # 数据源配置项
   datasource:
-    url: jdbc:mysql://117.72.16.195:3306/Permissions?useSSL=false&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true # MySQL Connector/J 8.X 连接的示例
+    url: jdbc:mysql://10.1.8.212:3306/Permissions?useSSL=false&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true # MySQL Connector/J 8.X 连接的示例
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root # 数据库账号
-    password: yLy#Alxy # 数据库密码
+    password: WZywb^sql57 # 数据库密码
     # HikariCP 自定义配置，对应 HikariConfig 配置属性类
     hikari:
       # 设置连接的最大生命周期，建议小于MySQL的wait_timeout设置
@@ -83,9 +86,9 @@ spring:
   data:
     redis:
       database: 2
-      host: 117.72.16.195
-      port: 8000
-      password:
+      host: 10.1.8.212
+      port: 6379
+      password: WZywb^reDis
       jedis:
         pool:
           max-active: 10

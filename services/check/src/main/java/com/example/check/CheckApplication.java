@@ -3,9 +3,11 @@ package com.example.check;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @MapperScan("com.example.check.mapper")
+@EnableCaching
 public class CheckApplication {
 
     public static void main(String[] args) {

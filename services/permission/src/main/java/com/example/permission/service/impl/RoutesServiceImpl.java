@@ -9,6 +9,7 @@ import com.example.permission.service.RoutesService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.permission.utils.RedisUtil;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class RoutesServiceImpl implements RoutesService {
 
@@ -79,10 +81,24 @@ public class RoutesServiceImpl implements RoutesService {
     @Override
     public ResponseResult getMenusRoute(Long parentId, Integer clientId) {
         List<RoutesMenu> menuRoutes;
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        
+        // 获取当前用户的权限信息，增加空值检查
+        Collection<? extends GrantedAuthority> authorities = null;
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        }
+        
         List<String> authorityNames = new ArrayList<>();
-        for (GrantedAuthority authority : authorities) {
-            authorityNames.add(authority.getAuthority());
+        if (authorities != null) {
+            for (GrantedAuthority authority : authorities) {
+                authorityNames.add(authority.getAuthority());
+            }
+        }
+
+        // 如果没有权限信息，直接返回空菜单列表
+        if (authorityNames.isEmpty()) {
+            log.debug("当前用户没有权限信息，返回空菜单列表");
+            return new ResponseResult(200, "查询成功", new ArrayList<RoutesMenu>());
         }
 
         QueryWrapper<Permissions> queryWrapper = new QueryWrapper<Permissions>().in("perms", authorityNames);
@@ -90,10 +106,13 @@ public class RoutesServiceImpl implements RoutesService {
         List<Long> permissionIds = permissionsMapper.selectObjs(queryWrapper);
 
         List<Routes> routes = new ArrayList<>();
-        if (!permissionIds.isEmpty()) {
+        // 检查permissionIds是否为空，避免生成无效的SQL
+        if (permissionIds != null && !permissionIds.isEmpty()) {
             QueryWrapper<Routes> routesQueryWrapper = new QueryWrapper<Routes>().in("perm", permissionIds);
             routesQueryWrapper.eq("client_id", clientId);
             routes = routesMapper.selectList(routesQueryWrapper);
+        } else {
+            log.debug("没有找到对应的权限ID，返回空路由列表");
         }
 
         menuRoutes = getMenuRoutes(routes, parentId);
