@@ -10,18 +10,16 @@ import com.example.permission.service.RolesService;
 import com.example.permission.service.UserService;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.permission.utils.RedisUtil;
+import com.example.permission.utils.SecurityUtils;
 import com.example.permission.utils.UserInfoUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -107,15 +105,17 @@ public class UserServiceImpl implements UserService {
         // 更新用户信息
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", newUser.getId());
-        CustomUserDetails userDetails = (CustomUserDetails) redisUtil.get(newUser.getId().toString());
         if (userMapper.update(newUser, updateWrapper) == 1) {
-            userDetails.setUser(newUser);
-            // 将更新后的用户信息保存到 Redis
-            HashMap<String, String> map = new HashMap<>();
-            map.put("userDetails", JSON.toJSONString(userDetails));
-            redisUtil.set(newUser.getId().toString(), map);
-
-            return new ResponseResult(200, "修改成功");
+            // 清除用户信息缓存
+            userInfoUtil.clearUserCache(newUser.getId().toString());
+            // 清除部门成员缓存
+            userInfoUtil.clearDeptUsersCache(newUser.getDepartmentId());
+            // 强制标记用户下次请求时从DB重新加载信息
+            SecurityUtils.setUserUpdateInformation(redisUtil, newUser.getId().toString());
+            // 从DB重新加载最新数据返回（绕过缓存）
+            User freshUser = userMapper.selectById(newUser.getId());
+            InfoUserDTO freshData = buildInfoUserDTO(freshUser);
+            return new ResponseResult(200, "修改成功", freshData);
         }
 
         return new ResponseResult(401, "修改失败");
@@ -170,10 +170,44 @@ public class UserServiceImpl implements UserService {
         return new ResponseResult(200, "获取成功", infoUserDTOList);
     }
 
+    /**
+     * 构建InfoUserDTO（解密邮箱/手机号，填充部门/角色名称）
+     */
+    private InfoUserDTO buildInfoUserDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+        InfoUserDTO dto = new InfoUserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setGrade(user.getGrade());
+        RSA rsa = new RSA(privateKey, null);
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+            dto.setEmail(rsa.decryptStr(user.getEmail(), KeyType.PrivateKey));
+        }
+        if (user.getPhone() != null && !user.getPhone().isEmpty()) {
+            dto.setPhone(rsa.decryptStr(user.getPhone(), KeyType.PrivateKey));
+        }
+        dto.setCreateTime(user.getCreateTime());
+        dto.setAvatar(user.getAvatar());
+        dto.setStatus(user.getStatus());
+        dto.setDepartmentId(user.getDepartmentId());
+        dto.setRoleId(user.getRoleId());
+
+        List<Departments> departments = departmentService.getDepartmentsList();
+        for (Departments department : departments) {
+            if (department.getId().equals(user.getDepartmentId())) {
+                dto.setDepartment(department.getName());
+                break;
+            }
+        }
+        List<Roles> roles = rolesService.getRolesList();
+        for (Roles role : roles) {
+            if (role.getId().equals(user.getRoleId())) {
+                dto.setRole(role.getName());
+                break;
+            }
+        }
+        return dto;
+    }
 }
-
-
-
-
-
-

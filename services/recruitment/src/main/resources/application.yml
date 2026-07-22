@@ -5,7 +5,7 @@ spring:
   application:
     name: recruitment
   profiles:
-    active: dev
+    active: product
   cloud:
     nacos:
       # --- 核心修复：增加服务注册发现配置 ---

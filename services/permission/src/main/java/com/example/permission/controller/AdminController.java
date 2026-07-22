@@ -1,6 +1,7 @@
 package com.example.permission.controller;
 
 import com.example.permission.entity.ResponseResult;
+import com.example.permission.entity.dto.AdminAddUserDTO;
 import com.example.permission.entity.dto.AdminUpdateUserDTO;
 import com.example.permission.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,5 +31,11 @@ public class AdminController {
     @DeleteMapping("/deleteUser")
     public ResponseResult deleteUser(@RequestParam String userId) {
         return adminService.deleteUser(userId);
+    }
+
+    @Operation(summary = "新增用户")
+    @PostMapping("/addUser")
+    public ResponseResult addUser(@RequestBody AdminAddUserDTO user) {
+        return adminService.addUser(user);
     }
 }

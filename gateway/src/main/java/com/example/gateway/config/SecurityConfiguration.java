@@ -77,19 +77,7 @@ public class SecurityConfiguration {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable) // 确保禁用表单登录
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                 .cors(cors -> cors.configurationSource(request -> {
-                     org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
-                     config.addAllowedOriginPattern("*");
-                     config.addAllowedMethod("GET");
-                     config.addAllowedMethod("POST");
-                     config.addAllowedMethod("PUT");
-                     config.addAllowedMethod("DELETE");
-                     config.addAllowedMethod("OPTIONS");
-                     config.addAllowedHeader("*");
-                     config.setAllowCredentials(true);
-                     config.setMaxAge(3600L);
-                     return config;
-                 }))
+                 .cors(ServerHttpSecurity.CorsSpec::disable)
                 .authorizeExchange(exchanges -> {
                     exchanges.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     anonymousUrls.forEach(url -> exchanges.pathMatchers(url).permitAll());

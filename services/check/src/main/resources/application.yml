@@ -14,6 +14,10 @@ spring:
     nacos:
 #      server-addr: 114.132.92.175:8848
       server-addr: 10.1.32.242:8848
+      discovery:
+        server-addr: 10.1.32.242:8848
+        namespace: ${spring.profiles.active}
+        group: DEFAULT_GROUP
       config:
         namespace: ${spring.profiles.active}
         import-check:
